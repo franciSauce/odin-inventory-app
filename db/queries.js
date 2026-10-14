@@ -188,3 +188,21 @@ const updateStaff = async object => {
 const delStaff = async id => {
     await pool.query("DELETE FROM staff WHERE id = $1", [id]);
 }
+
+// Genres
+const getAllGenres = async () => {
+    const { rows } = await pool.query("SELECT * FROM genres");
+    return rows;
+}
+
+const addGenre = async title => {
+    await pool.query("INSERT INTO genres (title) VALUES ($1)", [title]);
+}
+
+const updateGenre = async (id, title) => {
+    await pool.query("UPDATE genres SET title = $1 WHERE id = $2", [title, id]);
+}
+
+const delGenre = async id => {
+    await pool.query("DELETE FROM genres WHERE id =$1", [id]);
+}
