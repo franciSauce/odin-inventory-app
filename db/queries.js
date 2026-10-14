@@ -140,3 +140,27 @@ const updateManga = async object => {
     }
 }
 
+const delManga = async id => {
+    await pool.query("DELETE FROM manga WHERE id = $1", [id]);
+}
+
+// Staff
+const getAllStaff = async () => {
+    const { rows } = await pool.query("SELECT * FROM staff");
+    return rows;
+}
+
+const getStaffDetailById = async (id) => {
+    const { rows: [staff] } = await pool.query("SELECT * FROM staff WHERE id = $1", [id]);
+    const { rows: manga } = await pool.query(`
+        SELECT m.*, r.title as role FROM manga m
+        LEFT JOIN manga_staff ms ON ms.manga_id = m.id
+        LEFT JOIN roles r ON r.id = ms.role_id
+        WHERE ms.staff_id = $1
+        `, [id]);
+    return {
+        ...staff,
+        manga,
+    }
+}
+
