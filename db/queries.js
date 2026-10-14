@@ -206,3 +206,23 @@ const updateGenre = async (id, title) => {
 const delGenre = async id => {
     await pool.query("DELETE FROM genres WHERE id =$1", [id]);
 }
+
+// Roles
+const getAllRoles = async () => {
+    const { rows } = await pool.query("SELECT * FROM roles");
+    return rows;
+}
+
+const addRole = async title => {
+    await pool.query("INSERT INTO roles (title) VALUES ($1)", [title]);
+}
+
+const updateRole = async (id, title) => {
+    await pool.query("UPDATE roles SET title = $1 WHERE id = $2", [title,id]);
+}
+
+const delRole = async id => {
+    await pool.query("DELETE FROM manga_staff WHERE role_id = $1", [id]);
+    await pool.query("DELETE FROM roles WHERE id = $1", [id]);
+}
+
