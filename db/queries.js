@@ -88,3 +88,55 @@ const addManga = async (object) => {
     }
 }
 
+const updateManga = async object => {
+    const values = [
+        object.title,
+        object.description ?? null,
+        object.status,
+        object.startdate,
+        object.enddate ?? null,
+        object.id,
+    ]
+
+    const updatedManga = await pool.query(`
+        UPDATE manga SET title = $1, description = $2, status = $3, startdate = $4, enddate = $5
+        WHERE id = $6 RETURNING *
+        `, values);
+    await pool.query("DELETE FROM manga*_staff WHERE manga_id = $1", [object.id]);
+    await pool.query("DELETE FROM manga_genres WHERE manga_id = $1", [object.id]);
+
+    const staff = Array.isArray(object.staff) ? object.staff : [];
+    const genres = Array.isArray(object.genres) ? object.genres : [];
+
+    if(staff.length) {
+        for (const member of staff) {
+            let staffId, roleId;
+            if (member && (member.staffId !== undefined || member.roleId !== undefined)) {
+                staffId = Number(member.staffId ?? member.staffid);
+                roleId = Number(member.roleId ?? member.roleid);
+            }
+            if (!Number.isInteger(staffId) || !Number.isInteger(roleId)) continue;
+
+            await pool.query(`
+                INSERT INTO manga_staff (manga_id, staff_id, role_id)
+                VALUES ($1, $2, $3)
+                `, [object.id, staffId, roleId]);
+        }
+    }
+
+    if(genres.length) {
+        for (const genre of genres) {
+            let genreId;
+            if (genre && (genre.genreId !== undefined || genre.genreid !== undefined)) {
+                genreId = Number(genre.genreId ?? genre.genreid);
+            }
+            if (!Number.isInteger(genreId)) continue;
+
+            await pool.query(`
+                INSERT INTO manga_genres (manga_id, genre_id)
+                VALUES ($1, $2)
+                `, [object.id, genreId]);
+        }
+    }
+}
+
