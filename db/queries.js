@@ -25,3 +25,66 @@ const getMangaDetailById = async (id) => {
         genres,
     }
 }
+
+const getMangaListByGenre = async (id) => {
+    const { rows } = await pool.query(`
+        SELECT m.* FROM manga m
+        LEFT JOIN manga_genres mg ON mg.manga_id = m.id
+        WHERE mg.genre_id = $1
+        `, [id]);
+    return rows;
+}
+
+const addManga = async (object) => {
+    const values = [
+        object.title,
+        object.description ?? null,
+        object.status,
+        object.startdate,
+        object.enddate ?? null
+    ];
+
+    const staff = Array.isArray(object.staff) ? object.staff : [];
+    const genres = Array.isArray(object.genres) ? object.genres : [];
+
+    const { rows: [newManga] } = await pool.query(`
+        INSERT INTO manga (title, description, status, startdate, enddate)
+        VALUES ($1, $2, $3, $4, $5) RETURNING *
+        `, values);
+
+    if (staff.length) {
+        for (const member of staff) {
+            let staffId, roleId;
+
+            if (member && (member.staffId !== undefined || member.roleId !== undefined)) {
+                staffId = Number(member.staffId ?? member.staffid);
+                roleId = Number(member.roleId ?? member.roleid);
+            }
+
+            if (!Number.isInteger(staffId) || !Number.isInteger(roleId)) continue;
+
+            await pool.query(`
+                INSERT INTO manga_staff (manga_id, staff_id, role_id)
+                VALUES ($1, $2, $3)
+            `, [newManga.id, staffId, roleId]);
+        }
+    }
+
+    if (genres.length) {
+        for (const genre of genres) {
+            let genreId;
+
+            if (genre && (genre.genreId !== undefined || genre.genreid !== undefined)) {
+                genreId = Number(genre.genreId ?? genre.genreid);
+            }
+
+            if (!Number.isInteger(genreId)) continue;
+
+            await pool.query(`
+                INSERT INTO manga_genres (manga_id, genre_id)
+                VALUES ($1, $2)
+            `, [newManga.id, genreId]);
+        }
+    }
+}
+
