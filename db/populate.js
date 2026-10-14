@@ -72,5 +72,36 @@ const SQL = `
         role_id INTEGER REFERENCES roles(id) ON DELETE SET NULL,
         PRIMARY KEY (manga_id, staff_id, role_id)
     );
+
+    -- SEED DATA
+
+    INSERT INTO manga (title, description, status, startDate, endDate)
+    VALUES
+        ('Kiichi!!', '${sqlEscape(DESCRIPTIONS.kiichi)}', 'Finished', '2001-07-27', '2006-03-28'),
+        ('No. 5', '${sqlEscape(DESCRIPTIONS.no5)}', 'Finished', '2000-11-30', '2005-10-25'),
+        ('Bokutachi ga Yarimashita', '${sqlEscape(DESCRIPTIONS.bokugaya)}', 'Finished', '2015-04-06', '2017-01-23');
+
+    INSERT INTO genres (title)
+    VALUES
+        ('Drama'), ('Psychological'), ('Action'), ('Adventure'), ('Sci-fi'),
+        ('Thriller'), ('Comedy'), ('Romance'), ('Slice of Life')
+    ON CONFLICT DO NOTHING;
+
+    INSERT INTO roles (title)
+    VALUES
+        ('Story & Illustration'), ('Story'), ('Illustration'),
+        ('Translator (English)'), ('Translator (French)')
+    ON CONFLICT DO NOTHING;
+
+    INSERT INTO staff (fullname, birth, gender)
+    VALUES
+        ('Hideki Arai', '1963-09-15', 'Male'),
+        ('Taiyo Matsumoto', '1967-10-25', 'Male'),
+        ('Muneyuki Kaneshiro', '1987-12-09', 'Male'),
+        ('Hikaru Araki', NULL, NULL),
+        ('Michael Arias', '1968-02-02', 'Male'),
+        ('Thibaud Desbief', NULL, NULL);
+
+
     
 `
