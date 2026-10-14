@@ -226,3 +226,29 @@ const delRole = async id => {
     await pool.query("DELETE FROM roles WHERE id = $1", [id]);
 }
 
+module.exports = {
+    getAllManga,
+    getMangaDetailById,
+    getMangaListByGenre,
+    addManga,
+    updateManga,
+    delManga,
+
+    getAllStaff,
+    getStaffDetailById,
+    addStaff,
+    addStaffOnlyFullname,
+    updateStaff,
+    delStaff,
+
+    getAllGenres,
+    addGenre,
+    updateGenre,
+    delGenre,
+
+    getAllRoles,
+    addRole,
+    updateRole,
+    delRole,
+}
+
