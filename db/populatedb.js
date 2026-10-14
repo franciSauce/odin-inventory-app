@@ -131,3 +131,27 @@ const usage = () => {
     console.log(' node db/populatedb.js "postgresql://<user>:<password>@prod-host:5432/prod_db"');
 }
 
+const main = async () => {
+    console.log('seeding...');
+    const client = new Client({
+        connectionString: argv[2] || CONNECTION_STRING
+    });
+
+    try {
+        await client.connect();
+        await client.query(SQL);
+        console.log('done');
+    } catch (error) {
+        console.error('Error seeding DB:', error.message);
+        process.exitCode = 1;
+    } finally {
+        await client.end();
+    }
+}
+
+if (argv.includes('--help') || process.argv.includes('-h')) {
+    usage();
+    exit();
+}
+
+main();
