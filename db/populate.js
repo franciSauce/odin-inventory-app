@@ -19,3 +19,58 @@ const DESCRIPTIONS = {
        `,
 }
 
+const sqlEscape = (s = '') => String(s).replace(/'/g, "''");
+
+const SQL = `
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+        username VARCHAR(255) NOT NULL UNIQUE,
+        password VARCHAR(255) NOT NULL
+    );
+    
+    CREATE TABLE IF NOT EXISTS logs (
+        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+        action TEXT NOT NULL,
+        user_id INTEGER REFERENCES users(id) ON DELETE SET NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS manga (
+        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+        title VARCHAR(100) NOT NULL,
+        description TEXT,
+        status VARCHAR(10) NOT NULL,
+        startDate DATE NOT NULL,
+        endDate DATE
+    );
+
+    CREATE TABLE IF NOT EXISTS genres (
+        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+        title VARCHAR(255) NOT NULL UNIQUE
+    );
+
+    CREATE TABLE IF NOT EXISTS roles (
+        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+        title VARCHAR(255) NOT NULL UNIQUE
+    );
+
+    CREATE TABLE IF NOT EXISTS staff (
+        id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+        fullname VARCHAR(255) NOT NULL,
+        birth DATE,
+        gender VARCHAR(20)
+    );
+
+    CREATE TABLE IF NOT EXISTS manga_genres (
+        manga_id INTEGER REFERENCES manga(id) ON DELETE CASCADE,
+        genre_id INTEGER REFERENCES genres(id) ON DELETE CASCADE,
+        PRIMARY KEY (manga_id, genre_id)
+    );
+
+    CREATE TABLE IF NOT EXISTS manga_staff (
+        manga_id INTEGER REFERENCES manga(id) ON DELETE CASCADE,
+        staff_id INTEGER REFERENCES staff(id) ON DELETE CASCADE,
+        role_id INTEGER REFERENCES roles(id) ON DELETE SET NULL,
+        PRIMARY KEY (manga_id, staff_id, role_id)
+    );
+    
+`
