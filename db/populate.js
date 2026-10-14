@@ -73,7 +73,7 @@ const SQL = `
         PRIMARY KEY (manga_id, staff_id, role_id)
     );
 
-    -- SEED DATA
+-- SEED DATA
 
     INSERT INTO manga (title, description, status, startDate, endDate)
     VALUES
@@ -102,6 +102,25 @@ const SQL = `
         ('Michael Arias', '1968-02-02', 'Male'),
         ('Thibaud Desbief', NULL, NULL);
 
+-- MANGA GENRES ASSIGNMENT
 
-    
-`
+    INSERT INTO manga_genres (manga_id, genre_id)
+    VALUES
+        (1, 1), (1, 2),
+
+        (2, 3), (2, 4), (2, 2), (2, 5), (2, 6),
+
+        (3, 3), (3, 7), (3, 1), (3, 2), (3, 8), (3, 9), (3, 6);
+
+-- MANGA ROLES ASSIGNMENT
+
+    INSERT INTO manga_staff (manga_id, staff_id, role_id)
+    VALUES
+        (1, 1, 1), -- Hideki Arai: Story & Illustration on Kiichi!!
+        (2, 2, 1), -- Taiyo Matsumoto: Story & Illustration on No. 5
+        (3, 3, 2), -- Kaneshiro: Story on Bokutachi
+        (3, 4, 3), -- Araki: Illustration on Bokutachi
+        (2, 5, 4), -- Arias: English Translator on No.5
+        (2, 6, 5); -- Desbief: French Translator on No.5
+`;
+
