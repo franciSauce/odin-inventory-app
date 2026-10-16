@@ -92,3 +92,67 @@ const validateManga = [
     .customSanitizer(arraySanitizer)
     .isArray().withMessage('Genres must be properly formatted'),
 ];
+
+const getAll = async (req, res) => {
+  title = 'Manga List'
+  const object = {};
+  object.title = title;
+  if (req.query.genre) {
+    object.genre = Number(req.query.genre);
+    object.manga = await db.getMangaListByGenre(req.query.genre);
+    res.render('index', object);
+    return;
+  }
+  object.manga = await db.getAllManga();
+  res.render('index', object);
+}
+
+const getDetail = async (req, res) => {
+  const manga = await db.getMangaDetailById(req.params.id);
+  title = `${manga.title} - Detail`;
+  res.render('detail', {
+    title,
+    manga,
+  });
+}
+
+const getAdd = async (req, res) => {
+  title = 'Add new manga';
+  const staff = await db.getAllStaff();
+  const roles = await db.getAllRoles();
+  const genres = await db.getAllGenres();
+  res.render('addManga', {
+    title,
+    statuses,
+    staff,
+    roles,
+    genres,
+  });
+}
+
+const postAdd = [
+  validateManga,
+  async (req, res) => {
+    title = 'Add new manga';
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const staff = await db.getAllStaff();
+      const roles = await db.getAllRoles();
+      const genres = await db.getAllGenres();
+      return res.status(400).render('addManga', {
+        title,
+        statuses,
+        staff,
+        roles,
+        genres,
+        errors: errors.array(),
+      });
+    }
+
+    const object = matchedData(req);
+    await db.addManga(object);
+    res.redirect('/');
+  }
+]
+
