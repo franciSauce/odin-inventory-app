@@ -2,13 +2,13 @@ const { Pool } = require('pg');
 const { env } = require('node:process');
 
 if (process.env.NODE_ENV !== 'production') {
-    require('dotenv').config();
+    require('dotenv').config({ path: require('node:path').join(__dirname, '.env') });
 }
 
-const { DB_HOST, DB_USER, DB_NAME, DB_PASSWORD, DB_PORT, CONNECTING_STRING } = env;
+const { DB_HOST, DB_USER, DB_NAME, DB_PASSWORD, DB_PORT, CONNECTION_STRING } = env;
 
-const pool = CONNECTING_STRING
-    ? new Pool({ connectionString: CONNECTING_STRING, ssl: {
+const pool = CONNECTION_STRING
+    ? new Pool({ connectionString: CONNECTION_STRING, ssl: {
         rejectUnauthorized: false }})
         : new Pool({
             host: DB_HOST,
