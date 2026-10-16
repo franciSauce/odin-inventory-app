@@ -1,7 +1,8 @@
 const { Client } = require('pg');
 const { argv, exit, env } = require('node:process');
+const path = require('node:path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 const { CONNECTION_STRING } = env;
-require('dotenv').config();
 
 const DESCRIPTIONS = {
     kiichi: 'Left to himself at an early age in the slummiest parts of today’s Japan, Kiichi learns how to survive on his own. As a teenager, how can he adapt to a society whose rules he rejects? Unless he creates his own rules… Kiichi, a raw icon of strength and integrity, stands alone against the world’s injustice and becomes an unforgettable character.',
@@ -127,7 +128,7 @@ const SQL = `
 const usage = () => {
     console.log('Usage: node db/populatedb.js <connection-string>');
     console.log('Examples:');
-    console.log(' node db/populatedb.js "postgresql://<user>:<password>@localhost;5432/odin_inventory"');
+    console.log(' node db/populatedb.js "postgresql://<user>:<password>@localhost:5432/odin_inventory"');
     console.log(' node db/populatedb.js "postgresql://<user>:<password>@prod-host:5432/prod_db"');
 }
 
