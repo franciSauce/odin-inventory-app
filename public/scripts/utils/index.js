@@ -34,3 +34,65 @@ const setupDialog = (openBtn, dialog) => {
  * @param {string} dataId - The data attribute name used to store the ID of the selected item.
  */
 
+const setupFilterDropdown = (input, dialog, containerClass, dataId) => {
+  const buttonsContainer = $(`div.${containerClass}`);
+  const buttons = document.querySelectorAll(`.${containerClass} > button`);
+  const addButton = input.nextElementSibling;
+
+  addButton.addEventListener('click', () => {
+    dialog.showModal();
+  });
+
+  dialog.addEventListener('click', e => {
+    if (e.target === dialog) dialog.close();
+  });
+
+  input.addEventListener('focus', () => {
+    buttonsContainer.style.display = 'flex';
+  });
+
+  input.addEventListener('blur', () => {
+    buttonsContainer.style.display = 'none';
+
+    const id = input.dataset[dataId];
+    if (!id) {
+      input.value = '';
+    } else if (id) {
+      const selectedButton = [...buttons].find(btn => btn.dataset[dataId] === id);
+      input.value = selectedButton.textContent.trim();
+    }
+  });
+  
+  input.addEventListener('input', () => {
+    const items = [...buttons].map(btn => ({
+      id: btn.getAttribute(`data-${dataId}`),
+      title: btn.textContent.trim(),
+    }));
+    const query = input.value.toLowerCase();
+    const filteredItems = items.filter(item => {
+      return item.title.toLowerCase().includes(query);
+    });
+    buttonsContainer.replaceChildren(
+      ...filteredItems.map(item => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.textContent = item.title;
+        button.dataset[dataId] = item.id;
+        button.addEventListener('mousedown', () => {
+          input.value = button.textContent.trim();
+          input.dataset[dataId] = button.dataset[dataId];
+        });
+        return button;
+      })
+    );
+  });
+
+  buttons.forEach(btn => {
+    btn.addEventListener('mousedown', () => {
+      input.value = btn.textContent.trim();
+      input.dataset[dataId] = btn.dataset[dataId];
+    });
+  });
+}
+  
+export { $, setupDialog, setupFilterDropdown }
