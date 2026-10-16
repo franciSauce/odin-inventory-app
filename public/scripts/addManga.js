@@ -109,3 +109,60 @@ const genres = [...assignedGenresContainer.children].map(li => {
     genreId: Number(li.dataset.genreid),
   };
 });
+
+const genresAssignments = genres.length ? [...genres] : [];
+genreHiddenInput.value = genres.length ? JSON.stringify(genres) : '';
+
+addGenre.addEventListener('click', () => {
+  genreInput.blur();
+
+  const genreId = genreInput.dataset.genreid
+
+  if (genreId) {
+    const entryLi = document.createElement('li');
+    entryLi.dataset.genreid = genreId;
+    
+    const p = document.createElement('p');
+    p.textContent = genreInput.value;
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.type = 'button';
+    deleteBtn.textContent = 'X';
+
+    entryLi.appendChild(p);
+    entryLi.appendChild(deleteBtn);
+
+    deleteBtn.addEventListener('click', () => {
+      assignedGenresContainer.removeChild(entryLi);
+      const index = genresAssignments.findIndex(assignment => assignment.genreId === Number(genreId));
+      genresAssignments.splice(index, 1);
+      genreHiddenInput.value = JSON.stringify(genresAssignments);
+    });
+
+    genresAssignments.push({ genreId: Number(genreId)});
+    genreHiddenInput.value = JSON.stringify(genresAssignments);
+
+    assignedGenresContainer.appendChild(entryLi);
+  }
+
+  genreInput.value = '';
+  genreInput.dataset.genreid = '';
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (!staffHiddenInput.value) {
+    staffHiddenInput.value = staffRoleAssignments.length ? JSON.stringify(staffRoleAssignments) : '';
+  }
+  if (!genreHiddenInput.value) {
+    genreHiddenInput.value = genresAssignments.length ? JSON.stringify(genresAssignments) : '';
+  }
+
+  const currentUrl = window.location.pathname;
+  const redirectStaffInput = $('#redirect-staff');
+  const redirectRolesInput = $('#redirect-roles');
+  const redirectGenresInput = $('#redirect-genres');
+  
+  if (redirectStaffInput) redirectStaffInput.value = currentUrl;
+  if (redirectRolesInput) redirectRolesInput.value = currentUrl;
+  if (redirectGenresInput) redirectGenresInput.value = currentUrl;
+});
