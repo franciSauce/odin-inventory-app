@@ -18,5 +18,55 @@ const validateFullyStaff = [
     body('gender').optional({ checkFalsy: true }).isIn(genders).withMessage('Gender must be one of the predefined options.'),
 ]
 
+const getAll = async (req, res) => {
+  const staff = await db.getAllStaff();
+  title = 'Staff List';
+  res.render('staff/list', {
+    title,
+    staff,
+  });
+}
 
+const getDetail = async (req, res) => {
+  const staff = await db.getStaffDetailById(req.params.id);
+  title = `${staff.fullname} - Detail`
+  res.render('staff/detail', {
+    title,
+    staff
+  });
+}
 
+const getAdd = (req, res) => {
+  title = 'Add New Staff Member';
+  res.render('staff/addStaff', {
+    title,
+    genders
+  });
+}
+
+const postAddFully = [
+  validateFullyStaff,
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).render("staff/addStaff", {
+        title: 'Add New Staff Member',
+        genders,
+        errors: errors.array(),
+      });
+    }
+    const object = matchedData(req);
+    await db.addStaff(object);
+    res.redirect('/staff');
+  }
+]
+
+const postAdd = [
+  validateStaff,
+  async (req, res) => {
+    const { fullname } = matchedData(req);
+    await db.addStaffOnlyFullname(fullname);
+    const redirectTo = req.body.redirect || req.get('Referer') || '/add';
+    res.redirect(redirectTo);
+  }
+]
