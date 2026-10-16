@@ -5,7 +5,7 @@ let title;
 
 const validatedGenres = [
     body('title').trim()
-    .isLength({ min: 1, max: 255 }).withMessage('Title must be between 1 and 255 characters,'),
+    .isLength({ min: 1, max: 255 }).withMessage('Title must be between 1 and 255 characters.'),
 ]
 
 const postAdd = [
