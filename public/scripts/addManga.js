@@ -33,3 +33,79 @@ const addStaffRole = $('.add-staff-role');
 const assignedStaffRolesContainer = $('ul.assigned-staff-roles');
 const staffHiddenInput = $('input[name="staff"]');
 
+const staffRoles = [...assignedStaffRolesContainer.children].map(li => {
+  const button = li.querySelector('button');
+  button.addEventListener('click', () => {
+    assignedStaffRolesContainer.removeChild(li);
+    const index = staffRoleAssignments.findIndex(assignment => assignment.staffId === Number(li.dataset.memberid) && assignment.roleId === Number(li.dataset.roleid));
+    staffRoleAssignments.splice(index, 1);
+    staffHiddenInput.value = JSON.stringify(staffRoleAssignments);
+  });
+  return {
+    staffId: Number(li.dataset.memberid),
+    roleId: Number(li.dataset.roleid),
+  };
+});
+
+const staffRoleAssignments = staffRoles.length ? [...staffRoles] : [];
+staffHiddenInput.value = staffRoles.length ? JSON.stringify(staffRoles) : '';
+
+addStaffRole.addEventListener('click', () => {
+  staffInput.blur();
+  rolesInput.blur();
+
+  const staffId = staffInput.dataset.memberid;
+  const roleId = rolesInput.dataset.roleid;
+
+  if (staffId && roleId) {
+    const entryLi = document.createElement('li');
+    entryLi.dataset.memberid = staffId;
+    entryLi.dataset.roleid = roleId;
+
+    const p = document.createElement('p');
+    p.textContent = `${staffInput.value} - ${rolesInput.value}`;
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.type = 'button';
+    deleteBtn.textContent = 'X';
+    
+    entryLi.appendChild(p);
+    entryLi.appendChild(deleteBtn);
+
+    deleteBtn.addEventListener('click', () => {
+      assignedStaffRolesContainer.removeChild(entryLi);
+      const index = staffRoleAssignments.findIndex(assignment => assignment.staffId === Number(staffId) && assignment.roleId === Number(roleId));
+      staffRoleAssignments.splice(index, 1);
+      staffHiddenInput.value = JSON.stringify(staffRoleAssignments);
+    });
+
+    staffRoleAssignments.push({ staffId: Number(staffId), roleId: Number(roleId) });
+    staffHiddenInput.value = JSON.stringify(staffRoleAssignments);
+
+    assignedStaffRolesContainer.appendChild(entryLi);
+  }
+
+  staffInput.value = '';    staffInput.dataset.memberid = '';
+  rolesInput.value = '';    rolesInput.dataset.roleid = '';
+});
+
+const genreInput = $('#genres');
+const addGenresDialog = $('#add-genres-dialog');
+setupFilterDropdown(genreInput, addGenresDialog, 'genres-buttons', 'genreid');
+
+const addGenre = $('.add-genre');
+const assignedGenresContainer = $('.assigned-genres');
+const genreHiddenInput = $('input[name="genres"]');
+
+const genres = [...assignedGenresContainer.children].map(li => {
+  const button = li.querySelector('button');
+  button.addEventListener('click', () => {
+    assignedGenresContainer.removeChild(li);
+    const index = genresAssignments.findIndex(assignment => assignment.genreId === Number(li.dataset.genreid));
+    genresAssignments.splice(index, 1);
+    genreHiddenInput.value = JSON.stringify(genresAssignments);
+  });
+  return {
+    genreId: Number(li.dataset.genreid),
+  };
+});
