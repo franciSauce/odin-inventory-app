@@ -75,11 +75,11 @@
     text-align: center;
   }
 
-  & > a:nth-child(2):hover {
+  & > a:first-child:hover {
     background-color: #333;
   }
 
-  & > form:nth-child(3) > button:hover {
+  & > form:nth-child(2) > button:hover {
     background-color: #b30000;
   }
 }
