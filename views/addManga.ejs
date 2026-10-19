@@ -93,6 +93,24 @@
                 <button class="submit" type="submit">Add Manga</button>
             </div>
         </form>
+
+        <%- include('partials/dialogAddForm', {
+            singular: 'staff',
+            plural: 'staff',
+            value: 'fullname', 
+        }) %>
+
+        <%- include('partials/dialogAddForm', {
+            singular: 'role',
+            plural: 'roles',
+            value: 'title', 
+        }) %>
+
+        <%- include('partials/dialogAddForm', {
+            singular: 'genre',
+            plural: 'genres',
+            value: 'title', 
+        }) %>
     </div>
 </body>
 </html>
