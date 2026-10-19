@@ -19,7 +19,6 @@
   font-weight: bold;
   text-decoration: none;
   cursor: pointer;
-  transition: background-color 0.1s ease-in-out, color 0.1s ease-in-out;
 }
 
 .page-action:hover,
